@@ -1,8 +1,8 @@
 use handlebars::JsonValue;
 use handlebars::{Handlebars, no_escape};
 use log::{error, info, warn};
-use rand::distr::Alphanumeric;
-use rand::{Rng, rng};
+use rand::rng;
+use rand::{Rng, distr::Alphanumeric};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use shells::sh;
@@ -18,7 +18,6 @@ use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 
 const DOCKER_NETWORK: &str = ""; // --network=host
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ShellCommand {
@@ -107,18 +106,22 @@ pub fn get_version() -> String {
 }
 
 /// Execute a command locally (use `execute_scone_cli` if the command is scone or rust-cli)
-/// The command will be executed locally using the `spawn_server` (if installed), thus avoiding 
+/// The command will be executed locally using the `spawn_server` (if installed), thus avoiding
 /// the fork. Make sure to use `SCONE_FORK`=1 (or --fork if signed) if `spawn_server` is not used.
 pub fn execute_non_scone_cli(shell: &str, cmd: &str) -> (i32, String, String) {
     match *shell_command() {
-        ShellCommand::SpawnServerSconeCli | ShellCommand::SpawnServerDocker | ShellCommand::SpawnServer => spawn_server::sh!("{cmd}"),
-        ShellCommand::Docker | ShellCommand::SconeCli | ShellCommand::None => execute_local(shell, cmd),
+        ShellCommand::SpawnServerSconeCli
+        | ShellCommand::SpawnServerDocker
+        | ShellCommand::SpawnServer => spawn_server::sh!("{cmd}"),
+        ShellCommand::Docker | ShellCommand::SconeCli | ShellCommand::None => {
+            execute_local(shell, cmd)
+        }
     }
 }
 
 /// Execute a scone or rust-cli command locally (use `execute_non_scone_cli` for other commands)
 ///
-/// The command will be executed locally using the `spawn_server` (if installed), thus avoiding 
+/// The command will be executed locally using the `spawn_server` (if installed), thus avoiding
 /// the fork. Make sure to use `SCONE_FORK`=1 (or --fork if signed), if `spawn_server` is not used.
 /// If `scone` is not installed locally, the command will be executed in a docker container.
 /// If `docker` is not installed either, we bail.
@@ -134,9 +137,7 @@ pub fn execute_scone_cli(shell: &str, cmd: &str) -> (i32, String, String) {
             shell,
             &format!("SCONE_PRODUCTION=0 SCONE_NO_TIME_THREAD=1 {cmd}"),
         ),
-        ShellCommand::Docker => {
-            execute_local(shell, &format!("{}", build_docker_command(cmd)))
-        }
+        ShellCommand::Docker => execute_local(shell, &format!("{}", build_docker_command(cmd))),
         ShellCommand::SpawnServer | ShellCommand::None => (
             -3,
             String::new(),
@@ -225,7 +226,7 @@ macro_rules! local {
 }
 
 /// Create CAS session
-/// 
+///
 /// (see `create_session_with_config`)
 pub fn create_session<'a, T: Serialize + for<'de> Deserialize<'de>>(
     name: &str,
@@ -239,11 +240,11 @@ pub fn create_session<'a, T: Serialize + for<'de> Deserialize<'de>>(
 }
 
 /// Create CAS session
-/// 
+///
 /// The communication with the CAS will either take place by executing the commands using the spawn_server
 /// (if installed) either directly over scone cli (if installed), or docker (if installed).
 /// If spawn_server is running, this will be prioritized over the direct use of scone or docker.
-/// 
+///
 /// `target_dir` the directory where the `session_files` directory will be created.
 /// All session files will be saved to `target_dir/session_files`.
 /// The `target_dir` path must be releative to the current directory,
