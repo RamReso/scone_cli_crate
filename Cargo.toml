@@ -16,5 +16,5 @@ rand = "0.9.0"
 shells = "*"
 opg = "*"
 #get_if_addrs = "0.5.3"
-signpolicy = { git = "ssh://git@github.com/RamReso/signpolicy.git", branch = "main" }
-spawn_server = { git = "ssh://git@github.com/RamReso/spawn_server.git", branch = "main" }
+signpolicy = { git = "ssh://git@github.com/scontain/signpolicy.git", rev="0867fbf657265ac94405860e59e75aca4e441565"}
+spawn_server = { git = "ssh://git@github.com/scontain/spawn_server.git", rev="f7175d2037aa774e908cfaa07f218aa9c21820c7"}

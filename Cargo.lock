@@ -2226,7 +2226,7 @@ dependencies = [
 [[package]]
 name = "signpolicy"
 version = "0.1.2"
-source = "git+ssh://git@github.com/RamReso/signpolicy.git?branch=main#0867fbf657265ac94405860e59e75aca4e441565"
+source = "git+ssh://git@github.com/scontain/signpolicy.git?rev=0867fbf657265ac94405860e59e75aca4e441565#0867fbf657265ac94405860e59e75aca4e441565"
 dependencies = [
  "anyhow",
  "argfile",
@@ -2282,7 +2282,7 @@ dependencies = [
 [[package]]
 name = "spawn_server"
 version = "0.1.0"
-source = "git+ssh://git@github.com/RamReso/spawn_server.git?branch=main#f7175d2037aa774e908cfaa07f218aa9c21820c7"
+source = "git+ssh://git@github.com/scontain/spawn_server.git?rev=f7175d2037aa774e908cfaa07f218aa9c21820c7#f7175d2037aa774e908cfaa07f218aa9c21820c7"
 dependencies = [
  "actix-rt",
  "actix-web",
